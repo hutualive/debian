@@ -19,9 +19,11 @@ so below is the process step by step.
 
 # populate a raw sd card image
 create a 1GB raw sd card image file -->
+
 sudo dd if=/dev/zero of=./sd-dk1.img bs=1M count=1024
 
 use gdisk to create the partitions: fsbl1, fsbl2, ssbl, bootfs, rootfs -->
+
 sudo gdisk ./sd-dk1.img
 
 GPT reserve the first 17KB on sd card for protective MBR and 128 entries of GPT table. so you can only start with 17KB on-wards and you need adjust the sector alignment to 1 as gdisk default is 2048.
@@ -31,7 +33,7 @@ you need mark the bootfs partition as legacy bios bootable for u-boot to look fo
 below is the summary of partitions and filesystem type:
 
 | size | name | type |
-| ---- | ---- | ---- |
+| :----: | :----: | :----: |
 | 0-17K: | protective MBR and GPT table |
 | 17K+256K: | fsbl1 | linux reserved 8301 |
 | 17K+256K+256K: | fsbl2 | linux reserved 8301 |
