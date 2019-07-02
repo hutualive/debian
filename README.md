@@ -68,7 +68,7 @@ sudo mkfs.ext4 -L bootfs /dev/loop18p4
 rsync -avx ./bootfs/dk1 /dev/loop18p4
 
 # populate rootfs
-rootfs is big, you need follow the readme inside ./rootfs to bootstrap the debian 10 root filesystem before proceed below step:
+rootfs is big, you need follow the readme inside [./rootfs/README.md](./rootfs/README.md) to bootstrap the debian 10 root filesystem before proceed below step:
 
 sudo mkfs.ext4 -L rootfs /dev/loop18p5
 
