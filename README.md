@@ -29,12 +29,13 @@ GPT reserve the first 17KB on sd card for protective MBR and 128 entries of GPT 
 you need mark the bootfs partition as legacy bios bootable for u-boot to look for kernel and device tree.
 
 below is the summary of partitions and filesystem type:
-0-17K: protective MBR and GPT table
-17K+256K: fsbl1 - linux reserved 8301
-17K+256K+256K: fsbl2 - linux reserved 8301
-17K+256K+256K+2M: ssbl - linux reserved 8301
-17K+256K+256K+2M+64M: bootfs - linux filesystem 8300 with legacy bios bootable attribute
-17K+256K+256K+2M+64M+rest of 1GB: rootfs - linux filesystem 8300
+
+0-17K: | protective MBR and GPT table
+17K+256K: | fsbl1 | linux reserved 8301
+17K+256K+256K: | fsbl2 | linux reserved 8301
+17K+256K+256K+2M: | ssbl | linux reserved 8301
+17K+256K+256K+2M+64M: | bootfs | linux filesystem 8300 with legacy bios bootable attribute
+17K+256K+256K+2M+64M+rest of 1GB: | rootfs | linux filesystem 8300
 
 # mount sd card image as disk to populate
 sudo losetup -Pf sd-dk1.img
