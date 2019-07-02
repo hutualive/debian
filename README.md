@@ -30,12 +30,14 @@ you need mark the bootfs partition as legacy bios bootable for u-boot to look fo
 
 below is the summary of partitions and filesystem type:
 
-0-17K: | protective MBR and GPT table
-17K+256K: | fsbl1 | linux reserved 8301
-17K+256K+256K: | fsbl2 | linux reserved 8301
-17K+256K+256K+2M: | ssbl | linux reserved 8301
-17K+256K+256K+2M+64M: | bootfs | linux filesystem 8300 with legacy bios bootable attribute
-17K+256K+256K+2M+64M+rest of 1GB: | rootfs | linux filesystem 8300
+| size | name | type |
+| ---- | ---- | ---- |
+| 0-17K: | protective MBR and GPT table |
+| 17K+256K: | fsbl1 | linux reserved 8301 |
+| 17K+256K+256K: | fsbl2 | linux reserved 8301 |
+| 17K+256K+256K+2M: | ssbl | linux reserved 8301 |
+| 17K+256K+256K+2M+64M: | bootfs | linux filesystem 8300 with legacy bios bootable attribute |
+| 17K+256K+256K+2M+64M+rest of 1GB: | rootfs | linux filesystem 8300 |
 
 # mount sd card image as disk to populate
 sudo losetup -Pf sd-dk1.img
@@ -44,27 +46,36 @@ sudo losetup -Pf sd-dk1.img
 
 # populate fsbl
 inside the fsbl1 and fsbl2 directory, I uploaded st official tf-a firmware for dk1 and dk2 for your convenience:
+
 sudo dd if=./fsbl1/tf-a-dk1.stm32 of=/dev/loop18p1 bs=1M conv=fdatasync  
+
 sudo dd if=./fsbl2/tf-a-dk1.stm32 of=/dev/loop18p2 bs=1M conv=fdatasync
 
 # populate ssbl
 inside the ssbl directory, I uploaded u-boot firmware for dk1 and dk2 for your convenience: 
+
 sudo dd if=./ssbl/u-boot-dk1.stm32 of=/dev/loop18p3 bs=1M conv=fdatasync
 
 //ps: st use u-boot v2018.11 with their own patch, they enabled watchdog by default, so to use debian without periodically reset, I disabled the watchdog and re-compiled the firmware.
 
 # populate bootfs
 inside the bootfs directory, I uploaded the kernel, device tree blog and config file for dk1 and dk2 for your convenience:
+
 sudo mkfs.ext4 -L bootfs /dev/loop18p4
+
 rsync -avx ./bootfs/dk1 /dev/loop18p4
 
 # populate rootfs
 rootfs is big, you need follow the readme inside ./rootfs to bootstrap the debian 10 root filesystem before proceed below step:
+
 sudo mkfs.ext4 -L rootfs /dev/loop18p5
+
 rsync -avx ./rootfs/ /dev/loop18p5
 
 # clean up and return to the quick start guide
+
 sudo losetup -d /dev/loop18
+
 sudo dd if=./sd-dk1.img of=/dev/sdb bs=8M conv=fdatasync
 
 have fun :)
