@@ -58,7 +58,7 @@ inside the ssbl directory, I uploaded u-boot firmware for dk1 and dk2 for your c
 
 sudo dd if=./ssbl/u-boot-dk1.stm32 of=/dev/loop18p3 bs=1M conv=fdatasync
 
-//ps: st use u-boot v2018.11 with their own patch, they enabled watchdog by default, so to use debian without periodically reset, I disabled the watchdog and re-compiled the firmware.
+//ps: I'm using u-boot v2018.11 with st patch, st enabled watchdog by default, so to use debian without periodically reset, I disabled the watchdog and re-compiled the firmware. you can find the patch under ./ssbl/patch as reference and readme for how to compile.
 
 # populate bootfs
 inside the bootfs directory, I uploaded the kernel, device tree blog and config file for dk1 and dk2 for your convenience:
@@ -66,6 +66,8 @@ inside the bootfs directory, I uploaded the kernel, device tree blog and config 
 sudo mkfs.ext4 -L bootfs /dev/loop18p4
 
 rsync -avx ./bootfs/dk1 /dev/loop18p4
+
+//ps: I'm using the latest lts kernel version v4.19.56 from kernel.org with st patch and fragment. you can find the patch and frament under ./bootfs/patch as reference and readme for how to compile.
 
 # populate rootfs
 rootfs is big, you need follow the readme inside [./rootfs/README.md](./rootfs/README.md) to bootstrap the debian 10 root filesystem before proceed below step:
