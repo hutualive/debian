@@ -10,8 +10,6 @@ sudo dd if=./sd-dk1.img of=/dev/sdb bs=8M conv=fdatasync
 
 //caution: check carefully your device file name, here for my case is /dev/sdb for my usb sd card reader.
 
-//ps: now I still do not figure out a cloud storage service to upload my 1GB sd-dk1.img/sd-dk2.img file for you to download and try immediately.
-
 # introduction
 unlike your favorite raspberry pi board, st choose to use GPT(GUID partition table)as partition/boot mechanisim. the rom bootloader inside the SoC will look for the partition name fsbl1 for first stage bootloader. if failed, will look for fsbl2 as backup. st choose to use arm tf-a for fsbl1 and fsbl2. first stage bootloader will load second stage loader(ssbl), here is u-boot which is popular in embedded world. then second stage bootloader will load linux kernel and device tree blob. with these SoC/board specifi infrastructures put in place, you can bootstrap debian 10 as your root filesystem.
 
@@ -47,6 +45,7 @@ sudo losetup -Pf sd-dk1.img
 //ps: here in my case the image file mounted as /dev/loop18 with 5 partitions  
 
 # populate fsbl
+
 inside the fsbl1 and fsbl2 directory, I uploaded st official tf-a firmware for dk1 and dk2 for your convenience:
 
 sudo dd if=./fsbl1/tf-a-dk1.stm32 of=/dev/loop18p1 bs=1M conv=fdatasync  
@@ -54,32 +53,48 @@ sudo dd if=./fsbl1/tf-a-dk1.stm32 of=/dev/loop18p1 bs=1M conv=fdatasync
 sudo dd if=./fsbl2/tf-a-dk1.stm32 of=/dev/loop18p2 bs=1M conv=fdatasync
 
 # populate ssbl
+
 inside the ssbl directory, I uploaded u-boot firmware for dk1 and dk2 for your convenience: 
 
 sudo dd if=./ssbl/u-boot-dk1.stm32 of=/dev/loop18p3 bs=1M conv=fdatasync
 
 //ps: I'm using u-boot v2018.11 with st patch, st enabled watchdog by default, so to use debian without periodically reset, I disabled the watchdog and re-compiled the firmware. you can find the patch under ./ssbl/patch as reference and readme for how to compile.
 
-# populate bootfs
-inside the bootfs directory, I uploaded the kernel, device tree blog and config file for dk1 and dk2 for your convenience:
+# prepare raw bootfs
 
 sudo mkfs.ext4 -L bootfs /dev/loop18p4
 
-rsync -avx ./bootfs/dk1 /dev/loop18p4
-
-//ps: I'm using the latest lts kernel version v4.19.56 from kernel.org with st patch and fragment. you can find the patch and frament under ./bootfs/patch as reference and readme for how to compile.
-
-# populate rootfs
-rootfs is big, you need follow the readme inside [./rootfs/README.md](./rootfs/README.md) to bootstrap the debian 10 root filesystem before proceed below step:
+# prepare raw rootfs
 
 sudo mkfs.ext4 -L rootfs /dev/loop18p5
 
-rsync -avx ./rootfs/rootfs/ /dev/loop18p5
-
-# clean up and return to the quick start guide
+# clean up and flash the sd card image
 
 sudo losetup -d /dev/loop18
 
 sudo dd if=./sd-dk1.img of=/dev/sdb bs=8M conv=fdatasync
+
+# populate bootfs
+
+insert the sd card into pc, you will have bootfs and rootfs as normal usb drive.
+
+inside the bootfs directory, I uploaded the kernel, device tree blog and config file for dk1 and dk2 for your convenience:
+
+rsync -avx ./bootfs/dk1 /media/dp/bootfs
+
+//ps: I'm using the latest lts kernel version v4.19.56 from kernel.org with st patch and fragment. you can find the patch and frament under ./bootfs/patch as reference and readme for how to compile.
+
+# populate rootfs
+
+rootfs is big, you need follow the readme inside [./rootfs/README.md](./rootfs/README.md) to bootstrap the debian 10 root filesystem before proceed below step:
+
+rsync -avx ./rootfs/rootfs/ /media/dp/rootfs
+
+# wrap up
+write back the whole system to raw sd card image for future replication
+
+sudo dd if=/dev/sdb of=./sd-dk1.img bs=8M conv=fdatasync
+
+next time you just need refer to quick start guide to bring up debian 10 with one command.
 
 have fun :)
