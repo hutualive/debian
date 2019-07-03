@@ -74,7 +74,7 @@ rootfs is big, you need follow the readme inside [./rootfs/README.md](./rootfs/R
 
 sudo mkfs.ext4 -L rootfs /dev/loop18p5
 
-rsync -avx ./rootfs/ /dev/loop18p5
+rsync -avx ./rootfs/rootfs/ /dev/loop18p5
 
 # clean up and return to the quick start guide
 
