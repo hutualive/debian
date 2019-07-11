@@ -93,7 +93,7 @@ rsync -avx ./rootfs/rootfs/ /media/dp/rootfs
 # wrap up
 write back the whole system to raw sd card image for future replication
 
-sudo dd if=/dev/sdb of=./sd-dk1.img bs=8M conv=fdatasync
+sudo dd if=/dev/sdb of=./sd-dk1.img bs=8M conv=fdatasync count=128  --> just dd the 1st 1GB, otherwise it's a long process for 16GB sd card make no sense
 
 next time you just need refer to quick start guide to bring up debian 10 with one command.
 
