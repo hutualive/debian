@@ -91,7 +91,7 @@ rootfs is big, you need follow the readme inside [./rootfs/README.md](./rootfs/R
 rsync -avx ./rootfs/rootfs/ /media/dp/rootfs
 
 # wrap up
-write back the whole system to raw sd card image for future replication
+write back the whole system as image for future replication
 
 sudo dd if=/dev/sdb of=./sd-dk1.img bs=8M conv=fdatasync count=128  --> just dd the 1st 1GB, otherwise it's a long process for 16GB sd card make no sense
 
