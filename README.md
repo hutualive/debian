@@ -20,7 +20,7 @@ create a 1GB raw sd card image file -->
 
 sudo dd if=/dev/zero of=./sd-dk1.img bs=1M count=1024
 
-use gdisk to create the partitions: fsbl1, fsbl2, ssbl, bootfs, rootfs -->
+use gdisk to create the partitions: fsbl1, fsbl2, ssbl, rootfs -->
 
 sudo gdisk ./sd-dk1.img
 
@@ -36,8 +36,7 @@ below is the summary of partitions and filesystem type:
 | 17K+256K: | fsbl1 | linux reserved 8301 |
 | 17K+256K+256K: | fsbl2 | linux reserved 8301 |
 | 17K+256K+256K+2M: | ssbl | linux reserved 8301 |
-| 17K+256K+256K+2M+64M: | bootfs | linux filesystem 8300 with legacy bios bootable attribute |
-| 17K+256K+256K+2M+64M+rest of 1GB: | rootfs | linux filesystem 8300 |
+| 17K+256K+256K+2M+rest of 1GB: | rootfs | linux filesystem 8300 with legacy bios bootable attribute |
 
 # mount sd card image as disk to populate
 sudo losetup -Pf sd-dk1.img
@@ -46,11 +45,11 @@ sudo losetup -Pf sd-dk1.img
 
 # populate fsbl
 
-inside the fsbl1 and fsbl2 directory, I uploaded st official tf-a firmware for dk1 and dk2 for your convenience:
+inside the fsbl directory, I uploaded st official tf-a firmware for dk1 and dk2 for your convenience:
 
-sudo dd if=./fsbl1/tf-a-dk1.stm32 of=/dev/loop18p1 bs=1M conv=fdatasync  
+sudo dd if=./fsbl/tf-a-dk1.stm32 of=/dev/loop18p1 bs=1M conv=fdatasync  
 
-sudo dd if=./fsbl2/tf-a-dk1.stm32 of=/dev/loop18p2 bs=1M conv=fdatasync
+sudo dd if=./fsbl/tf-a-dk1.stm32 of=/dev/loop18p2 bs=1M conv=fdatasync
 
 # populate ssbl
 
@@ -58,15 +57,9 @@ inside the ssbl directory, I uploaded u-boot firmware for dk1 and dk2 for your c
 
 sudo dd if=./ssbl/u-boot-dk1.stm32 of=/dev/loop18p3 bs=1M conv=fdatasync
 
-//ps: I'm using u-boot v2018.11 with st patch, st enabled watchdog by default, so to use debian without periodically reset, I disabled the watchdog and re-compiled the firmware. you can find the patch under ./ssbl/patch as reference and readme for how to compile.
-
-# prepare raw bootfs
-
-sudo mkfs.ext4 -L bootfs /dev/loop18p4
-
 # prepare raw rootfs
 
-sudo mkfs.ext4 -L rootfs /dev/loop18p5
+sudo mkfs.ext4 -L rootfs /dev/loop18p4
 
 # clean up and flash the sd card image
 
@@ -74,15 +67,13 @@ sudo losetup -d /dev/loop18
 
 sudo dd if=./sd-dk1.img of=/dev/sdb bs=8M conv=fdatasync
 
-# populate bootfs
+# populate boot
 
-insert the sd card into pc, you will have bootfs and rootfs as normal usb drive.
+insert the sd card into pc, you will have rootfs as normal usb drive.
 
-inside the bootfs directory, I uploaded the kernel, device tree blog and config file for dk1 and dk2 for your convenience:
+inside the boot directory, I uploaded the kernel, device tree blog and config file for dk1 and dk2 for your convenience:
 
-rsync -avx ./bootfs/dk1 /media/dp/bootfs
-
-//ps: I'm using the latest lts kernel version v4.19.56 from kernel.org with st patch and fragment. you can find the patch and frament under ./bootfs/patch as reference and readme for how to compile.
+rsync -avx ./boot/dk1 /media/dp/rootfs/boot
 
 # populate rootfs
 
@@ -98,3 +89,5 @@ sudo dd if=/dev/sdb of=./sd-dk1.img bs=8M conv=fdatasync count=128  --> just dd 
 next time you just need refer to quick start guide to bring up debian 10 with one command.
 
 have fun :)
+
+ps: I have the how-to guides under how-to-compile directory for your reference, you can compile the fsbl, ssbl, linux kernel, optee-os as you want.

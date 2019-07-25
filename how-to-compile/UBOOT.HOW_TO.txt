@@ -1,0 +1,19 @@
+Compile U-Boot:
+---------------------------
+1. Prepare U-Boot source code
+2. Compile U-Boot source code
+
+1. Prepare U-Boot source:
+------------------------
+URL: https://github.com/STMicroelectronics/u-boot
+Branch: v2018.11-stm32mp
+Revision: v2018.11-stm32mp-r2.5
+
+$> git clone https://github.com/STMicroelectronics/u-boot.git
+$> git checkout -b dev v2018.11-stm32mp-r2.5
+
+2. Compile U-Boot source:
+----------------------------------
+$> cd u-boot
+$> make st_dk2_defconfig
+$> make -j8 ARCH=arm CROSS_COMPILE=arm-linux-musleabihf- DEVICE_TREE=stm32mp157c-dk2 all
