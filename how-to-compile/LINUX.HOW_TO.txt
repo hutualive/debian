@@ -9,19 +9,19 @@ URL: https://github.com/STMicroelectronics/linux
 Branch: v4.19-stm32mp
 Revision: v4.19-stm32mp-r1.5
 
-$> git clone https://github.com/STMicroelectronics/linux.git
-$> git checkout -b dev v4.19-stm32mp-r1.5
+git clone https://github.com/STMicroelectronics/linux.git
+git checkout -b dev v4.19-stm32mp-r1.5
 
 2. Compile kernel source code:
 ------------------------------
-$> cd linux
-$> echo "" > .scmversion
-$> make -j8 ARCH=arm CROSS_COMPILE=arm-linux-musleabihf- uImage vmlinux dtbs modules LOADADDR=0xC2000040 O="$PWD/../build"
-$> make ARCH=arm CROSS_COMPILE=arm-linux-musleabihf- INSTALL_MOD_PATH="$PWD/../build/install_artifact" modules_install O="$PWD/../build"
-$> mkdir -p $PWD/../build/install_artifact/boot/
-$> cp $PWD/../build/arch/arm/boot/uImage $PWD/../build/install_artifact/boot/
-$> cp $PWD/../build/arch/arm/boot/dts/st*.dtb $PWD/../build/install_artifact/boot/
+cd linux
+echo "" > .scmversion
+make -j8 ARCH=arm CROSS_COMPILE=arm-linux-musleabihf- uImage vmlinux dtbs modules LOADADDR=0xC2000040 O="$PWD/../build"
+make ARCH=arm CROSS_COMPILE=arm-linux-musleabihf- INSTALL_MOD_PATH="$PWD/../build/install_artifact" modules_install O="$PWD/../build"
+mkdir -p $PWD/../build/install_artifact/boot/
+cp $PWD/../build/arch/arm/boot/uImage $PWD/../build/install_artifact/boot/
+cp $PWD/../build/arch/arm/boot/dts/st*.dtb $PWD/../build/install_artifact/boot/
 
-$> cd $PWD/../build/install_artifact
-$> rm lib/modules/4.19.60/source lib/modules/4.19.60/build
-$> find . -name "*.ko" | xargs arm-linux-musleabihf-strip --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates
+cd $PWD/../build/install_artifact
+rm lib/modules/4.19.60/source lib/modules/4.19.60/build
+find . -name "*.ko" | xargs arm-linux-musleabihf-strip --strip-debug --remove-section=.comment --remove-section=.note --preserve-dates
